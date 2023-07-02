@@ -3,13 +3,5 @@
  * @since 2023-07-01
  */
 
-export default {
-    /* Initalize Function Start */
-    /**
-     * @param {Object} mail
-     * @param {Object} web
-     */
-    init: function initalize(mail, web) {
-        console.log(mail.ar, web)
-    }
-}
+export { init } from './init.js';
+export { info, error, warn, debug } from './log.js';
