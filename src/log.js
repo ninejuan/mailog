@@ -165,6 +165,10 @@ function decrypt(pw) {
  * @returns {Promise<void>}
  */
 async function sendMailLog(msg, level, date) {
+    let lvl = level.replace("ERROR", '<p style="color:#FF0000;font-weight:bolder;">[ERROR]</p>')
+                    .replace("WARN", '<p style="color:#FF8C00;font-weight:bolder;">[WARN]</p>')
+                    .replace("DEBUG", '<p style="color:#FFD700;font-weight:bolder;">[DEBUG]</p>')
+                    .replace("INFO", '<p style="color:#32CD32;font-weight:bolder;">[INFO]</p>')
     const transporter = nm.createTransport({
         host: logData.host,
         port: logData.port,
@@ -176,17 +180,15 @@ async function sendMailLog(msg, level, date) {
     });
 
     // mail form is in ./web/mailform.html
-    const sMail = await transporter.sendMail({
-        from: decrypt(logData.sender),
-        to: decrypt(logData.receiver),
+    transporter.sendMail({
+        from: await decrypt(logData.sender),
+        to: await decrypt(logData.receiver),
         subject: `[${logData.svcName}] ${level} - ${moment(date).tz(logData.timeZone).format("YYYY-MM-DD HH:mm:ss")}`,
         html: `${form.replace("{{message}}", `${msg}`)
-            .replace("{{level}}", level
-                .replace("[ERROR]", '<span style="color=red;">[ERROR]</span>')
-                .replace("[WARN]", '<span style="color=orange;">[WARN]</span>')
-                .replace("[DEBUG]", '<span style="color=yellow;">[DEBUG]</span>')
-                .replace("[INFO]", '<span style="color=green;">[INFO]</span>'))
+            .replace("{{level}}", lvl)
             .replace("{{time}}", moment(date).tz(logData.timeZone).format("YYYY-MM-DD HH:mm:ss"))}`,
+    }).catch((err) => {
+        throw new Error(err);
     });
 }
 

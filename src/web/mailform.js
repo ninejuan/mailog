@@ -6,9 +6,6 @@ let form = `<!DOCTYPE html>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <!-- Add Bootstrap CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-
     <style>
         /* Custom CSS styles */
         body {
@@ -44,8 +41,8 @@ let form = `<!DOCTYPE html>
             color: #333;
         }
 
-        p {
-            color: #666;
+        #Level {
+            font-weight: bolder;
         }
     </style>
 </head>
@@ -63,21 +60,18 @@ let form = `<!DOCTYPE html>
             <hr>
             <div class="col-md-6">
                 <h2>Level</h2>
-                <p class="fw-bold">{{level}}</p>
+                <span class="bg-warning">{{level}}</span>
             </div>
 
         <hr>
 
         <div class="row">
-            <div class="col">
+            <div class="col-md-6">
                 <h2>Message</h2>
-                <p>{{message}}</p>
+                <p class="fw-bold">{{message}}</p>
             </div>
         </div>
     </div>
-
-    <!-- Add Bootstrap JS (if needed) -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>
