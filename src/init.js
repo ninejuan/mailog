@@ -2,6 +2,7 @@ import * as webLauncher from './web.js'
 import { logInit } from './log.js';
 import { webInit } from './web.js';
 import * as bcrypt from 'bcrypt'
+import * as crypto from 'crypto'
 
 /**
  * @param {Object} log
@@ -50,6 +51,10 @@ import * as bcrypt from 'bcrypt'
  * @returns {void}
  */
 
+function base64Encode(str) {
+    return Buffer.from(str).toString('base64');
+}
+
 export function init(log, web) {
     if (!log.host || !log.port || !log.svcName || !log.auth.user || !log.auth.pass || !log.sender || !log.receiver || !web) {
         throw new Error("Invalid parameters");
@@ -70,8 +75,8 @@ export function init(log, web) {
     web.use ? webInit({
         port: web.port || 5001,
         auth: {
-            user: web.auth?.user ? bcrypt.hashSync(web?.auth?.user, 10) : bcrypt.hashSync("admin", 10),
-            pass: web.auth?.pass ? bcrypt.hashSync(web.auth.pass, 10) : bcrypt.hashSync("admin", 10),
+            user: web.auth?.user ? base64Encode(web?.auth?.user) : base64Encode("admin"),
+            pass: web.auth?.pass ? base64Encode(web.auth.pass) : base64Encode("admin"),
             captcha: web.auth?.captcha || true // Boolean
         }
     }) : null;
