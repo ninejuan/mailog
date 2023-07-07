@@ -9,6 +9,7 @@ import session from 'express-session';
 import { fileURLToPath } from "url";
 import path from 'path';
 import * as crypto from 'crypto';
+import * as fs from 'fs';
 let ejs = import('ejs');
 
 let webData;
@@ -33,12 +34,10 @@ app.use(passport.session());
 
 // 로그인 성공 시 실행
 passport.serializeUser((auth, done) => {
-    console.log('serializeUser')
     done(null, auth.id)
 })
 
 passport.deserializeUser((id, done) => {
-    console.log('deserializeUser')
     done(null, {
         id: id
     })
@@ -55,8 +54,6 @@ passport.use(new LocalStrategy({
             id: id
         })
     } else {
-        console.log(id, pw, 'failed')
-        console.log(webData.auth.user, webData.auth.pass, 'default Data')
         done(null, false)
     }
 }))
@@ -81,24 +78,32 @@ app.get('/logout', (req, res, next) => {
     res.redirect('/');
 })
 
-app.get(`/log`, import(__dirname + '/web/middleware/checkAuth'), (req, res) => {
-    req.params.level ? res.render(`log`, {
-        log: form.log
-    }) : res.render('logList')
+app.get('/log/:level', checkAuth, (req, res) => {
+    let log;
+    const readStream = fs.createReadStream(__dirname + `../log/${req?.params?.level ?? "none"}.log`, 'utf-8');
+    readStream.on('data', (chunk) => {
+        log += `${chunk}`.replaceAll(`[${req.params.level}]`, `<br>[${req.params.level}]`);
+    })
+    readStream.on('end', () => {
+        req.params.level ? res.render(`log`, {
+            level: req.params.level,
+            logs: log
+        }) : res.redirect('/');
+    })
+    readStream.on('error', (err) => {
+        console.log(err)
+        res.redirect('/');
+    })
 })
-
-function base64Decode(data) {
-    return Buffer.from(data, 'base64').toString('utf-8');
-}
 
 function webInit(data) {
     // web.use 값이 true인 상황
     webData = {
         port: data.port || 5001,
         auth: {
-            user: data.auth?.user ? bcrypt.hashSync(base64Decode(data?.auth?.user), 10) : bcrypt.hashSync(base64Decode("admin"), 10),
-            pass: data.auth?.pass ? bcrypt.hashSync(base64Decode(data.auth.pass), 10) : bcrypt.hashSync(base64Decode("admin"), 10),
-            captcha: data.auth?.captcha || true // Boolean
+            user: data.auth?.user,
+            pass: data.auth?.pass,
+            captcha: data.auth?.captcha // Boolean
         }
     }
     start();
@@ -108,6 +113,12 @@ function start() {
     app.listen(webData.port, () => {
         console.log(`Mailog: Log Server started at ${webData.port} Port`)
     })
+}
+
+function checkAuth(req, res, next) {
+    if (req.isAuthenticated()) return next();
+    req.session.backURL = req.url;
+    res.redirect("/login");
 }
 
 export {
