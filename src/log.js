@@ -166,9 +166,9 @@ function decrypt(pw) {
  */
 async function sendMailLog(msg, level, date) {
     let lvl = level.replace("ERROR", '<p style="color:#FF0000;font-weight:bolder;">[ERROR]</p>')
-                    .replace("WARN", '<p style="color:#FF8C00;font-weight:bolder;">[WARN]</p>')
-                    .replace("DEBUG", '<p style="color:#FFD700;font-weight:bolder;">[DEBUG]</p>')
-                    .replace("INFO", '<p style="color:#32CD32;font-weight:bolder;">[INFO]</p>')
+        .replace("WARN", '<p style="color:#FF8C00;font-weight:bolder;">[WARN]</p>')
+        .replace("DEBUG", '<p style="color:#FFD700;font-weight:bolder;">[DEBUG]</p>')
+        .replace("INFO", '<p style="color:#32CD32;font-weight:bolder;">[INFO]</p>')
     const transporter = nm.createTransport({
         host: logData.host,
         port: logData.port,
@@ -186,7 +186,11 @@ async function sendMailLog(msg, level, date) {
         subject: `[${logData.svcName}] ${level} - ${moment(date).tz(logData.timeZone).format("YYYY-MM-DD HH:mm:ss")}`,
         html: `${form.replace("{{message}}", `${msg}`)
             .replace("{{level}}", lvl)
-            .replace("{{time}}", moment(date).tz(logData.timeZone).format("YYYY-MM-DD HH:mm:ss"))}`,
+            .replace("{{time}}", moment(date).tz(logData.timeZone).format("YYYY-MM-DD HH:mm:ss"))
+            .replaceAll("script", "")
+            .replaceAll("<", "[")
+            .replaceAll(">", "]")
+            .replaceAll("{{svcName}}", logData.svcName)}`,
     }).catch((err) => {
         throw new Error(err);
     });
@@ -207,7 +211,10 @@ function appendLogToFile(msg, level, date) {
     !fs.existsSync(logPath) ? fs.mkdirSync(logPath) : null;
     const LevelLogFile = path.join(logPath, `${level}.log`);
     const allLog = path.join(logPath, `ALL.log`);
-    const Log = `[${moment(date).tz(logData.timeZone).format("YYYY-MM-DD HH:mm:ss")}] - ${logData.svcName} [${level}] - ${msg}\n`;
+    const Log = `[${moment(date).tz(logData.timeZone).format("YYYY-MM-DD HH:mm:ss")}] - ${logData.svcName} [${level}] - ${msg}\n`
+        .replaceAll("script", "")
+        .replaceAll("<", "[")
+        .replaceAll(">", "]");
     !fs.existsSync(LevelLogFile) ? fs.writeFileSync(LevelLogFile, Log) : fs.appendFileSync(LevelLogFile, Log);
     !fs.existsSync(allLog) ? fs.writeFileSync(allLog, Log) : fs.appendFileSync(allLog, Log);
 }

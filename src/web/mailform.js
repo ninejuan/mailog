@@ -49,7 +49,7 @@ let form = `<!DOCTYPE html>
 
 <body>
     <div class="container">
-        <h1 class="text-center">Mailog</h1>
+        <h1 class="text-center">{{svcname}} - Mailog</h1>
 
         <hr>
 
