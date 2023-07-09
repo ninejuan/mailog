@@ -85,9 +85,10 @@ app.get('/log/:level', checkAuth, (req, res) => {
         log += `${chunk}`.replaceAll(`[${req.params.level}]`, `<br>[${req.params.level}]`);
     })
     readStream.on('end', () => {
+        console.log(log);
         req.params.level ? res.render(`log`, {
             level: req.params.level,
-            logs: log
+            logs: log !== undefined ? log : '로그가 없습니다.'
         }) : res.redirect('/');
     })
     readStream.on('error', (err) => {
