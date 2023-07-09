@@ -1,19 +1,15 @@
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    메인폼
-    <button onclick="location.href = '/login'">로그인</button>
-    <button onclick="location.href = '/log'">로그 레벨리스트</button>
-    <button onclick="location.href = '/log/ALL'">로그 - ALL 레벨</button>
-    <button onclick="location.href = '/log/INFO'">로그 - Info 레벨</button>
-    <button onclick="location.href = '/log/DEBUG'">로그 - Debug 레벨</button>
-    <button onclick="location.href = '/log/WARN'">로그 - Warning 레벨</button>
-    <button onclick="location.href = '/log/ERROR'">로그 - Error 레벨</button>
-    <button onclick="location.href = '/logout'">로그아웃</button>
-</body>
+<%- include("./public/partials/setting") %>
+        <div class="container">
+            <strong><%= svcname %>'s Dashboard</strong>
+            <span class="mainSpanBr"><br></span>
+                <div class="logLevel">
+                    <button onclick="location.href = '/log/ALL'" class="button">로그 - ALL 레벨</button>
+                    <button onclick="location.href = '/log/INFO'" class="button">로그 - Info 레벨</button>
+                    <button onclick="location.href = '/log/DEBUG'" class="button">로그 - Debug 레벨</button>
+                    <button onclick="location.href = '/log/WARN'" class="button">로그 - Warning 레벨</button>
+                    <button onclick="location.href = '/log/ERROR'" class="button">로그 - Error 레벨</button>
+                </div>
+                <button onclick="location.href = '/logout'" class="button logout-button">로그아웃</button>
+        </div>
+    </body>
 </html>

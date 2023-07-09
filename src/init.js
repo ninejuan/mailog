@@ -73,6 +73,7 @@ export function init(log, web) {
         timeZone: log.timeZone || "Asia/Seoul"
     });
     web.use ? webInit({
+        svcname: log.svcName,
         port: web.port || 5001,
         auth: {
             user: web.auth?.user ? bcrypt.hashSync(web?.auth?.user, 10) : bcrypt.hashSync("admin", 10),

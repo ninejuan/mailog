@@ -1,15 +1,16 @@
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    <form action="/login" method="post" id="lgForm">
-        <input type="text" name="id" id="id" placeholder="ID">
-        <input type="password" name="pw" id="pw" placeholder="Password">
-        <button type="submit">Sign In</button>
-    </form>
-</body>
-</html>
+<%- include("./public/partials/setting") %>
+    <div class="content">
+        <h1>
+            Login to <%= svcname %>'s Mailog
+        </h1>
+        <div class="form">
+            <form action="/login" method="post" id="lgForm">
+                <input type="text" name="id" id="id" placeholder="ID">
+                <input type="password" name="pw" id="pw" placeholder="Password">
+                <button type="submit">Sign In</button>
+            </form>
+        </div>
+    </div>
+    </body>
+
+    </html>

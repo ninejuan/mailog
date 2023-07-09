@@ -59,11 +59,15 @@ passport.use(new LocalStrategy({
 }))
 
 app.get('/', (req, res) => {
-    req.user ? res.render('main') : res.redirect('login')
+    req.user ? res.render('main', {
+        svcname: webData.svcName
+    }) : res.redirect('login')
 })
 
 app.get('/login', (req, res) => {
-    req.user ? res.redirect('/') : res.render('login')
+    req.user ? res.redirect('/') : res.render('login', {
+        svcname: webData.svcName
+    })
 })
 
 app.post('/login', passport.authenticate('local', {
@@ -87,7 +91,11 @@ app.get('/log/:level', checkAuth, (req, res) => {
     readStream.on('end', () => {
         console.log(log);
         req.params.level ? res.render(`log`, {
-            level: req.params.level,
+            svcname: webData.svcName,
+            level: req.params.level.replace("ERROR", '<p style="color:#FF0000;font-weight:bolder;">[ERROR]</p>')
+                .replace("WARN", '<p style="color:#FF8C00;font-weight:bolder;">[WARN]</p>')
+                .replace("DEBUG", '<p style="color:#FFD700;font-weight:bolder;">[DEBUG]</p>')
+                .replace("INFO", '<p style="color:#32CD32;font-weight:bolder;">[INFO]</p>'),
             logs: log !== undefined ? log : '로그가 없습니다.'
         }) : res.redirect('/');
     })
@@ -100,6 +108,7 @@ app.get('/log/:level', checkAuth, (req, res) => {
 function webInit(data) {
     // web.use 값이 true인 상황
     webData = {
+        svcName: data.svcname,
         port: data.port || 5001,
         auth: {
             user: data.auth?.user,

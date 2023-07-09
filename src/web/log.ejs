@@ -1,14 +1,12 @@
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    레벨
-    파일 다운로드
-    <%= level %>
-    <%- logs %>
-</body>
+<%- include("./public/partials/setting") %>
+    <div class="logContainer">
+        <h1 class="logTitle">Log Page</h1>
+        <div class="level">
+            <%= level %>
+        </div>
+        <div class="logs">
+            <%= logs %>
+        </div>
+    </div>
+    </body>
 </html>
