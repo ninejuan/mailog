@@ -78,8 +78,30 @@ button[type="submit"]:hover {
     max-width: 200px;
 }
 
+.logButton {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #6183ff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    margin-bottom: 10px;
+    width: 50%;
+    max-width: 200px;
+    margin: 0 5px;
+}
+
 .button:hover {
     background-color: #45a049;
+}
+
+.logButton:hover {
+    background: #2d4dbe;
 }
 
 .logout-button {
@@ -123,4 +145,18 @@ button[type="submit"]:hover {
     border-radius: 5px;
     background-color: #f9f9f9;
     overflow: auto;
+}
+
+.logBtns {
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+}
+
+.searchBar {
+    margin: 0 auto;
+}
+
+#searchInput {
+   width:80%;
 }

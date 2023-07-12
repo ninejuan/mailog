@@ -158,6 +158,21 @@ function decrypt(pw) {
 
 /**
  * 
+ * @param {*} logFileDirectory 
+ * @param {String} LogContent 
+ * @param {String} LogLevel 
+ * @see appendLogToFile
+ * @description 로그 파일이 없을 경우 새로 로그 파일을 만들고 필요한 값을 삽입하는 함수입니다.
+ * @example newLogFileWrite(path.join(__dirname + 'iam.log'), 'Button Clicked!', 'INFO');
+ * @returns {void}
+ */
+function newLogFileWrite(logFileDirectory, LogContent, LogLevel) {
+    fs.writeFileSync(logFileDirectory, `THIS IS LOG FILE CREATED BY MAILOG. ${LogLevel} LEVEL.\n`)
+    fs.appendFileSync(logFileDirectory, LogContent);
+}
+
+/**
+ * 
  * @param {String} msg 
  * @param {String} level 
  * @param {Date} date
@@ -211,12 +226,12 @@ function appendLogToFile(msg, level, date) {
     !fs.existsSync(logPath) ? fs.mkdirSync(logPath) : null;
     const LevelLogFile = path.join(logPath, `${level}.log`);
     const allLog = path.join(logPath, `ALL.log`);
-    const Log = `[${moment(date).tz(logData.timeZone).format("YYYY-MM-DD HH:mm:ss")}] - ${logData.svcName} [${level}] - ${msg}\n`
+    const Log = `[T${moment(date).tz(logData.timeZone).format("YYYY-MM-DD HH:mm:ss")}] - ${logData.svcName} [${level}] - ${msg}\n`
         .replaceAll("script", "")
         .replaceAll("<", "[")
         .replaceAll(">", "]");
-    !fs.existsSync(LevelLogFile) ? fs.writeFileSync(LevelLogFile, Log) : fs.appendFileSync(LevelLogFile, Log);
-    !fs.existsSync(allLog) ? fs.writeFileSync(allLog, Log) : fs.appendFileSync(allLog, Log);
+    !fs.existsSync(LevelLogFile) ? newLogFileWrite(LevelLogFile, Log, level) : fs.appendFileSync(LevelLogFile, Log);
+    !fs.existsSync(allLog) ? newLogFileWrite(allLog, Log, 'ALL') : fs.appendFileSync(allLog, Log);
 }
 
 export {

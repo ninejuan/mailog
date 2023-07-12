@@ -4,9 +4,21 @@
         <div class="level">
             <%= level %>
         </div>
-        <div class="logs">
-            <%= logs %>
+        <div class="search">
+            <div class="searchBar">
+                <i class="fas fa-search"></i>
+                <input type="text" name="" id="searchInput" placeholder="Press Enter...">
+            </div>
+            <div class="logBtns">
+                <button onclick="searchLogs()" class="logButton">Search</button>
+                <button onclick="resetPage()" class="logButton">refresh</button>
+            </div>
+        </div>
+        <div class="logs" id="logEntries">
+            <%- logs %>
         </div>
     </div>
+    <script src="/js/search.js"></script>
     </body>
-</html>
+
+    </html>

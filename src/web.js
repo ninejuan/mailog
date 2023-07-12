@@ -86,17 +86,14 @@ app.get('/log/:level', checkAuth, (req, res) => {
     let log;
     const readStream = fs.createReadStream(__dirname + `../log/${req?.params?.level ?? "none"}.log`, 'utf-8');
     readStream.on('data', (chunk) => {
-        log += `${chunk}`.replaceAll(`[${req.params.level}]`, `<br>[${req.params.level}]`);
+        log += `${chunk}`.replaceAll(`[T`, `<br>[T`);
     })
     readStream.on('end', () => {
-        console.log(log);
         req.params.level ? res.render(`log`, {
             svcname: webData.svcName,
-            level: req.params.level.replace("ERROR", '<p style="color:#FF0000;font-weight:bolder;">[ERROR]</p>')
-                .replace("WARN", '<p style="color:#FF8C00;font-weight:bolder;">[WARN]</p>')
-                .replace("DEBUG", '<p style="color:#FFD700;font-weight:bolder;">[DEBUG]</p>')
-                .replace("INFO", '<p style="color:#32CD32;font-weight:bolder;">[INFO]</p>'),
-            logs: log !== undefined ? log : '로그가 없습니다.'
+            level: req.params.level,
+            logs: log == undefined ? '로그가 없습니다.' : `${log}`.replaceAll("undefined", "")
+                                                            .replaceAll("script", "")
         }) : res.redirect('/');
     })
     readStream.on('error', (err) => {
@@ -119,12 +116,24 @@ function webInit(data) {
     start();
 }
 
+/**
+ * @description 로그 웹 서버를 작동시키는 함수입니다 / This is function that turn on log web server.
+ * @returns {void}
+ */
 function start() {
     app.listen(webData.port, () => {
         console.log(`Mailog: Log Server started at ${webData.port} Port`)
     })
 }
 
+/**
+ * 
+ * @param {req} req 
+ * @param {*} res 
+ * @param {*} next 
+ * @description 사용자가 로그인된 상태인지 확인하는 모듈입니다 / This is middleware that checks if user logged in to service
+ * @returns 
+ */
 function checkAuth(req, res, next) {
     if (req.isAuthenticated()) return next();
     req.session.backURL = req.url;
