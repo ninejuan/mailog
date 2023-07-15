@@ -1,0 +1,1 @@
+export declare function init(log: Object, web: Object): null;

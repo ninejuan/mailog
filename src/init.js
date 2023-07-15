@@ -77,8 +77,7 @@ export function init(log, web) {
         port: web.port || 5001,
         auth: {
             user: web.auth?.user ? bcrypt.hashSync(web?.auth?.user, 10) : bcrypt.hashSync("admin", 10),
-            pass: web.auth?.pass ? bcrypt.hashSync(web.auth.pass, 10) : bcrypt.hashSync("admin", 10),
-            captcha: web.auth?.captcha || true // Boolean
+            pass: web.auth?.pass ? bcrypt.hashSync(web.auth.pass, 10) : bcrypt.hashSync("admin", 10)
         }
     }) : null;
 }

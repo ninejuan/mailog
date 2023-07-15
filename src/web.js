@@ -123,7 +123,6 @@ function webInit(data) {
         auth: {
             user: data.auth?.user,
             pass: data.auth?.pass,
-            captcha: data.auth?.captcha // Boolean
         }
     }
     start();
@@ -141,7 +140,7 @@ function start() {
 
 /**
  * 
- * @param {req} req 
+ * @param {*} req 
  * @param {*} res 
  * @param {*} next 
  * @description 사용자가 로그인된 상태인지 확인하는 모듈입니다 / This is middleware that checks if user logged in to service
@@ -165,7 +164,7 @@ async function checkValidAccount(req, res, next) {
     // GET 방식 API에서 호출하는 방식이다보니 URL만 있으면 호출이 가능하다.
     // 고로, 사용자의 계정이 정상인지 검증하는 과정이 필요하다.
     if (req.isAuthenticated() && await bcrypt.compareSync(req.session.passport.user, webData.auth.user)) return next();
-    res.redirect('/login')
+    res.redirect('/login');
 }
 
 export {
