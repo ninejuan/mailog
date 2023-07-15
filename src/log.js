@@ -5,12 +5,19 @@ import moment from 'moment-timezone';
 import form from './web/mailform.js';
 import * as path from 'path';
 import { fileURLToPath } from "url";
+import * as xss from 'xss';
 
 let logData;
 let key;
 let iv;
 
 const __dirname = fileURLToPath(new URL(".", import.meta.url));
+
+let filter = new xss.FilterXSS({
+    whiteList: {
+        a: ['br']
+    }
+})
 
 /**
  * 
@@ -193,6 +200,7 @@ async function sendMailLog(msg, level, date) {
             pass: await decrypt(logData.auth.pass)
         }
     });
+    appendLogToFile(filter.process(form), "TEST", new Date());
 
     // mail form is in ./web/mailform.html
     transporter.sendMail({
@@ -202,10 +210,7 @@ async function sendMailLog(msg, level, date) {
         html: `${form.replace("{{message}}", `${msg}`)
             .replace("{{level}}", lvl)
             .replace("{{time}}", moment(date).tz(logData.timeZone).format("YYYY-MM-DD HH:mm:ss"))
-            .replaceAll("script", "")
-            .replaceAll("<", "[")
-            .replaceAll(">", "]")
-            .replaceAll("{{svcName}}", logData.svcName)}`,
+            .replaceAll("{{svcname}}", logData.svcName)}`,
     }).catch((err) => {
         throw new Error(err);
     });
@@ -226,10 +231,7 @@ function appendLogToFile(msg, level, date) {
     !fs.existsSync(logPath) ? fs.mkdirSync(logPath) : null;
     const LevelLogFile = path.join(logPath, `${level}.log`);
     const allLog = path.join(logPath, `ALL.log`);
-    const Log = `[T${moment(date).tz(logData.timeZone).format("YYYY-MM-DD HH:mm:ss")}] - ${logData.svcName} [${level}] - ${msg}\n`
-        .replaceAll("script", "")
-        .replaceAll("<", "[")
-        .replaceAll(">", "]");
+    const Log = `[T${moment(date).tz(logData.timeZone).format("YYYY-MM-DD HH:mm:ss")}] - ${logData.svcName} [${level}] - ${filter.process(msg)}\n`;
     !fs.existsSync(LevelLogFile) ? newLogFileWrite(LevelLogFile, Log, level) : fs.appendFileSync(LevelLogFile, Log);
     !fs.existsSync(allLog) ? newLogFileWrite(allLog, Log, 'ALL') : fs.appendFileSync(allLog, Log);
 }

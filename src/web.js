@@ -10,11 +10,11 @@ import { fileURLToPath } from "url";
 import path from 'path';
 import * as crypto from 'crypto';
 import * as fs from 'fs';
+import * as xss from 'xss';
 let ejs = import('ejs');
 
 let webData;
 let __dirname = fileURLToPath(new URL(".", import.meta.url));
-let __rootdir = fileURLToPath;
 let secret = crypto.randomBytes(16).toString('hex');
 
 app.use(express.json());
@@ -59,6 +59,12 @@ passport.use(new LocalStrategy({
     }
 }))
 
+let filter = new xss.FilterXSS({
+    whiteList: {
+        a: ['br']
+    }
+})
+
 app.get('/', (req, res) => {
     req.user ? res.render('main', {
         svcname: webData.svcName
@@ -87,14 +93,13 @@ app.get('/log/:level', checkAuth, (req, res) => {
     let log;
     const readStream = fs.createReadStream(__dirname + `../log/${req?.params?.level ?? "none"}.log`, 'utf-8');
     readStream.on('data', (chunk) => {
-        log += `${chunk}`.replaceAll(`[T`, `<br>[T`);
+        log += filter.process(`${chunk}`.replaceAll(`[T`, `<br>[T`));
     })
     readStream.on('end', () => {
         req.params.level ? res.render(`log`, {
             svcname: webData.svcName,
             level: req.params.level,
             logs: log == undefined ? '로그가 없습니다.' : `${log}`.replaceAll("undefined", "")
-                                                            .replaceAll("script", "")
         }) : res.redirect('/');
     })
     readStream.on('error', (err) => {
