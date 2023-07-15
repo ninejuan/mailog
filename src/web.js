@@ -14,6 +14,7 @@ let ejs = import('ejs');
 
 let webData;
 let __dirname = fileURLToPath(new URL(".", import.meta.url));
+let __rootdir = fileURLToPath;
 let secret = crypto.randomBytes(16).toString('hex');
 
 app.use(express.json());
@@ -102,6 +103,13 @@ app.get('/log/:level', checkAuth, (req, res) => {
     })
 })
 
+app.get('/log/:level/dwnLogs', checkValidAccount, (req, res) => {
+    let file = `${process.cwd()}/log/${req?.params?.level ?? "none"}.log`
+    res.download(file, (err) => {
+        err ? res.json({err: err}) : res.end();
+    })
+})
+
 function webInit(data) {
     // web.use 값이 true인 상황
     webData = {
@@ -135,9 +143,24 @@ function start() {
  * @returns 
  */
 function checkAuth(req, res, next) {
-    if (req.isAuthenticated()) return next();
+    if (req.isAuthenticated() && req.session) return next();
     req.session.backURL = req.url;
     res.redirect("/login");
+}
+
+/**
+ * 
+ * @param {*} req 
+ * @param {*} res 
+ * @param {*} next 
+ * @description 로그인 된 계정이 유효한 계정인지 확인합니다 / This is middleware that checks user's account is valid
+ * @returns
+ */
+async function checkValidAccount(req, res, next) {
+    // GET 방식 API에서 호출하는 방식이다보니 URL만 있으면 호출이 가능하다.
+    // 고로, 사용자의 계정이 정상인지 검증하는 과정이 필요하다.
+    if (req.isAuthenticated() && await bcrypt.compareSync(req.session.passport.user, webData.auth.user)) return next();
+    res.redirect('/login')
 }
 
 export {

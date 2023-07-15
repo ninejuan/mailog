@@ -2,7 +2,7 @@ const searchInput = document.getElementById('searchInput');
 searchInput.addEventListener("keyup", (event) => {
     if (event.key == 'Enter') {
         searchLogs();
-    } 
+    }
 })
 
 function searchLogs() {
@@ -15,9 +15,13 @@ function searchLogs() {
     });
 
     document.getElementById("logEntries").innerHTML = filteredEntries.join("<br>")
-                                                                .replaceAll(`${input}`, `<span style="background-color: yellow;"><strong>${input}</strong></span>`);
+        .replaceAll(`${input}`, `<span style="background-color: yellow;"><strong>${input}</strong></span>`);
 }
 
 function resetPage() {
     location.reload();
+}
+
+async function downloadLogs() {
+    window.location.assign("/dwnLogs")
 }
