@@ -1,17 +1,24 @@
-import * as crypto from 'crypto';
-import * as nm from 'nodemailer';
-import * as fs from 'fs';
-import moment from 'moment-timezone';
-import form from './web/mailform.js';
-import * as path from 'path';
-import { fileURLToPath } from "url";
-import * as xss from 'xss';
+// import * as crypto from 'crypto';
+// import * as nm from 'nodemailer';
+// import * as fs from 'fs';
+// import moment from 'moment-timezone';
+// import form from '../web/mailform.js';
+// import * as path from 'path';
+// import { fileURLToPath } from "url";
+// import * as xss from 'xss';
+
+const crypto = require('crypto');
+const nm = require('nodemailer');
+const fs = require('fs');
+const moment = require('moment-timezone');
+const form = require('./webFile/mailform.js');
+const path = require('path');
+const { fileURLToPath } = require("url");
+const xss = require('xss');
 
 let logData;
 let key;
 let iv;
-
-const __dirname = fileURLToPath(new URL(".", import.meta.url));
 
 let filter = new xss.FilterXSS({
     whiteList: {
@@ -227,6 +234,7 @@ async function sendMailLog(msg, level, date) {
  * @returns {void}
  */
 function appendLogToFile(msg, level, date) {
+    console.log(__dirname)
     const logPath = path.join(__dirname, `../log/`);
     !fs.existsSync(logPath) ? fs.mkdirSync(logPath) : null;
     const LevelLogFile = path.join(logPath, `${level}.log`);
@@ -236,6 +244,10 @@ function appendLogToFile(msg, level, date) {
     !fs.existsSync(allLog) ? newLogFileWrite(allLog, Log, 'ALL') : fs.appendFileSync(allLog, Log);
 }
 
-export {
-    info, error, warn, debug, logInit
+module.exports = {
+    info: info,
+    error: error,
+    warn: warn,
+    debug: debug,
+    logInit: logInit
 }

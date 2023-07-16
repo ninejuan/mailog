@@ -23,5 +23,5 @@ function resetPage() {
 }
 
 async function downloadLogs() {
-    window.location.assign("/dwnLogs")
+    window.location.assign(`${location.pathname}/dwnLogs`)
 }

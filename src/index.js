@@ -4,5 +4,13 @@
  * @description index.js
  */
 
-export { init } from './init.js';
-export { info, error, warn, debug } from './log.js';
+const {info, error, warn, debug} = require('./log.js');
+const {init} = require('./init.js');
+
+module.exports = {
+    info,
+    error,
+    warn,
+    debug,
+    init
+}

@@ -1,28 +1,41 @@
-import express from 'express';
+const express = require('express');
 let app = express();
 
-import form from './web/mailform.js';
-import * as bcrypt from 'bcrypt';
-import passport, * as pa from 'passport';
-import { Strategy as LocalStrategy } from 'passport-local';
-import session from 'express-session';
-import { fileURLToPath } from "url";
-import path from 'path';
-import * as crypto from 'crypto';
-import * as fs from 'fs';
-import * as xss from 'xss';
-let ejs = import('ejs');
+// import form from '../web/mailform.js';
+// import * as bcrypt from 'bcrypt';
+// import passport, * as pa from 'passport';
+// import { Strategy as LocalStrategy } from 'passport-local';
+// import session from 'express-session';
+// import { fileURLToPath } from "url";
+// import path from 'path';
+// import * as crypto from 'crypto';
+// import * as fs from 'fs';
+// import * as xss from 'xss';
+// let ejs = import('ejs');
+
+const form = require('./webFile/mailform.js');
+const bcrypt = require('bcrypt');
+const passport = require('passport');
+const pa = require('passport');
+const LocalStrategy = require('passport-local').Strategy;
+const session = require('express-session');
+const { fileURLToPath } = require("url");
+const path = require('path');
+const crypto = require('crypto');
+const fs = require('fs');
+const xss = require('xss');
+const ejs = require('ejs');
 
 let webData;
-let __dirname = fileURLToPath(new URL(".", import.meta.url));
 let secret = crypto.randomBytes(16).toString('hex');
+let __dir = !fs.existsSync(process.cwd() + `/node_modules/mailog`) ? process.cwd() : process.cwd() + `/node_modules/mailog`;
 
 app.use(express.json());
 app.use(express.urlencoded({
     extended: true
 }));
-app.use(express.static(path.join(__dirname, '/web/public')));
-app.set('views', path.join(__dirname, '/web'));
+app.use(express.static(path.join(__dirname, '/webFile/public')));
+app.set('views', path.join(__dirname, '/webFile'));
 app.set('view engine', 'ejs');
 app.use(session({
     secret: secret,
@@ -91,9 +104,9 @@ app.get('/logout', (req, res, next) => {
 
 app.get('/log/:level', checkAuth, (req, res) => {
     let log;
-    const readStream = fs.createReadStream(__dirname + `../log/${req?.params?.level ?? "none"}.log`, 'utf-8');
+    const readStream = fs.createReadStream(__dir + `/log/${req?.params?.level ?? "none"}.log`, 'utf-8');
     readStream.on('data', (chunk) => {
-        log += filter.process(`${chunk}`.replaceAll(`[T`, `<br>[T`));
+        log += filter.process(`${chunk}`).replaceAll(`[T`, `<br>[T`);
     })
     readStream.on('end', () => {
         req.params.level ? res.render(`log`, {
@@ -109,7 +122,7 @@ app.get('/log/:level', checkAuth, (req, res) => {
 })
 
 app.get('/log/:level/dwnLogs', checkValidAccount, (req, res) => {
-    let file = `${process.cwd()}/log/${req?.params?.level ?? "none"}.log`
+    let file = `${__dir}/log/${req?.params?.level ?? "none"}.log`
     res.download(file, (err) => {
         err ? res.json({err: err}) : res.end();
     })
@@ -167,6 +180,6 @@ async function checkValidAccount(req, res, next) {
     res.redirect('/login');
 }
 
-export {
+module.exports = {
     webInit
 }

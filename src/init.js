@@ -1,8 +1,14 @@
-import * as webLauncher from './web.js'
-import { logInit } from './log.js';
-import { webInit } from './web.js';
-import * as bcrypt from 'bcrypt'
-import * as crypto from 'crypto'
+// import * as webLauncher from './web.js'
+// // import { logInit } from './log.js';
+// import { webInit } from './web.js';
+// import * as bcrypt from 'bcrypt';
+// import * as crypto from 'crypto';
+
+const webLauncher = require('./web.js')
+const logInit = require('./log.js').logInit
+const webInit = require('./web.js').webInit
+const bcrypt = require('bcrypt')
+const crypto = require('crypto')
 
 /**
  * @param {Object} log
@@ -55,7 +61,7 @@ function base64Encode(str) {
     return Buffer.from(str).toString('base64');
 }
 
-export function init(log, web) {
+function init(log, web) {
     if (!log.host || !log.port || !log.svcName || !log.auth.user || !log.auth.pass || !log.sender || !log.receiver || !web) {
         throw new Error("Invalid parameters");
     }
@@ -80,4 +86,8 @@ export function init(log, web) {
             pass: web.auth?.pass ? bcrypt.hashSync(web.auth.pass, 10) : bcrypt.hashSync("admin", 10)
         }
     }) : null;
+}
+
+module.exports = {
+    init
 }

@@ -76,5 +76,4 @@ let form = `<!DOCTYPE html>
 
 </html>
 `
-
-export default form;
+module.exports = {form}
