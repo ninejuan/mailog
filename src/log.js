@@ -1,19 +1,9 @@
-// import * as crypto from 'crypto';
-// import * as nm from 'nodemailer';
-// import * as fs from 'fs';
-// import moment from 'moment-timezone';
-// import form from '../web/mailform.js';
-// import * as path from 'path';
-// import { fileURLToPath } from "url";
-// import * as xss from 'xss';
-
 const crypto = require('crypto');
 const nm = require('nodemailer');
 const fs = require('fs');
 const moment = require('moment-timezone');
 const form = require('./webFile/mailform.js');
 const path = require('path');
-const { fileURLToPath } = require("url");
 const xss = require('xss');
 
 let logData;
@@ -214,13 +204,11 @@ async function sendMailLog(msg, level, date) {
         from: await decrypt(logData.sender),
         to: await decrypt(logData.receiver),
         subject: `[${logData.svcName}] ${level} - ${moment(date).tz(logData.timeZone).format("YYYY-MM-DD HH:mm:ss")}`,
-        html: `${form.replace("{{message}}", `${msg}`)
+        html: `${`${form}`.replace("{{message}}", `${msg}`)
             .replace("{{level}}", lvl)
             .replace("{{time}}", moment(date).tz(logData.timeZone).format("YYYY-MM-DD HH:mm:ss"))
             .replaceAll("{{svcname}}", logData.svcName)}`,
-    }).catch((err) => {
-        throw new Error(err);
-    });
+    })
 }
 
 /**
@@ -234,7 +222,6 @@ async function sendMailLog(msg, level, date) {
  * @returns {void}
  */
 function appendLogToFile(msg, level, date) {
-    console.log(__dirname)
     const logPath = path.join(__dirname, `../log/`);
     !fs.existsSync(logPath) ? fs.mkdirSync(logPath) : null;
     const LevelLogFile = path.join(logPath, `${level}.log`);

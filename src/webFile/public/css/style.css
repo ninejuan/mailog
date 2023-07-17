@@ -153,11 +153,13 @@ button[type="submit"]:hover {
     justify-content: center;
     margin-top: 10px;
 }
-
 .searchBar {
     margin: 0 auto;
 }
-
 #searchInput {
    width:80%;
+}
+p {
+    text-align: center;
+    font-weight: bold;
 }

@@ -4,3 +4,4 @@ node_modules
 test
 log
 let.todo
+*.tgz
