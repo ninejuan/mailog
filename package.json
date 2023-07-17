@@ -1,6 +1,6 @@
 {
   "name": "mailog",
-  "version": "1.0.2-alpha",
+  "version": "2.0.0",
   "description": "log event to mail and web",
   "main": "src/index.js",
   "types": "types/index.d.ts",
