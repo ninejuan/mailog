@@ -2,7 +2,7 @@ const crypto = require('crypto');
 const nm = require('nodemailer');
 const fs = require('fs');
 const moment = require('moment-timezone');
-const form = require('./webFile/mailform.js');
+const form = require('./webFile/mailform.js').form;
 const path = require('path');
 const xss = require('xss');
 
@@ -204,10 +204,12 @@ async function sendMailLog(msg, level, date) {
         from: await decrypt(logData.sender),
         to: await decrypt(logData.receiver),
         subject: `[${logData.svcName}] ${level} - ${moment(date).tz(logData.timeZone).format("YYYY-MM-DD HH:mm:ss")}`,
-        html: `${`${form}`.replace("{{message}}", `${msg}`)
+        html: `${`${form}`
+            .replace("{{message}}", `${msg}`)
             .replace("{{level}}", lvl)
             .replace("{{time}}", moment(date).tz(logData.timeZone).format("YYYY-MM-DD HH:mm:ss"))
-            .replaceAll("{{svcname}}", logData.svcName)}`,
+            .replaceAll("{{svcname}}", logData.svcName)
+        }`,
     })
 }
 

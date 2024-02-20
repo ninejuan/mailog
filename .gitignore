@@ -5,3 +5,4 @@ test
 log
 let.todo
 *.tgz
+*.lock
